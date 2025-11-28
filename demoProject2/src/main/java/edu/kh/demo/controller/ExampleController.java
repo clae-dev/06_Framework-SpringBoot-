@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import edu.kh.demo.model.dto.Student;
@@ -70,7 +71,14 @@ public class ExampleController {
 		return "example/ex1";
 	}
 	
-	
+	@PostMapping("ex2") //  /example/ex2  POST 방식 요청 매핑
+	public String ex2(Model model) {
+		
+		model.addAttribute("str", "<h1> 테스트 중 &times; </h1>"); // request scope
+		
+		// src/main/resources/templates/example/ex2.html 로 forward
+		return "example/ex2";
+	}
 	
 	
 	
