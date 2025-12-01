@@ -2,11 +2,14 @@ package edu.kh.todo.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import edu.kh.todo.model.dto.Todo;
 import edu.kh.todo.model.service.TodoService;
 
 @Controller
@@ -50,6 +53,44 @@ public class TodoController {
 		
 		return "redirect:/"; // 메인페이지로 재요청
 	}
+	
+	@GetMapping("detail") //  /todo/detail 로 Get방식 요청 매핑
+	public String todoDetail(@RequestParam("todoNo") int todoNo,
+							Model model, 
+							RedirectAttributes ra) {
+		
+		Todo todo = service.todoDetail(todoNo);
+		
+		String path = null;
+		
+		// 조회 결과가 있을 경우 detail.html forward
+		if(todo != null) {
+			
+			path = "todo/detail";
+			model.addAttribute("todo", todo); // request scope 값 세팅
+			
+		} else {
+		// 조회 결과가 없을 경우 메인페이지로 redirect
+			path = "redirect:/";
+			ra.addFlashAttribute("message", 
+					"해당 할 일이 존재하지 않습니다");
+			
+		}
+		
+		return path;
+	}
+	
+	
+	// 삭제 요청/응답 메서드 todoDelete()
+	// 삭제 성공 시 
+	// "/" 리다이렉트
+	// 메시지 : 삭제 성공
+	// 삭제 실패 시
+	// 해당 상세페이지로 리다이렉트
+	// 메시지 : 삭제 실패
+	
+	
+	
 	
 	
 	

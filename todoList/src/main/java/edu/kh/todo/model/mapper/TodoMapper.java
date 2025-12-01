@@ -30,6 +30,8 @@ public interface TodoMapper {
 	int getCompleteCount();
 
 	int addTodo(Todo todo);
+
+	Todo todoDetail(int todoNo);
 	
 	
 	

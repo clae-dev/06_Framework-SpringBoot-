@@ -66,8 +66,10 @@ public class TodoServiceImpl implements TodoService{
 		return mapper.addTodo(todo);
 	}
 	
-	
-	
+	@Override
+	public Todo todoDetail(int todoNo) {
+		return mapper.todoDetail(todoNo);
+	}
 	
 	
 }
