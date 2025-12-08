@@ -4,12 +4,16 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.thymeleaf.context.Context;
 import org.thymeleaf.spring6.SpringTemplateEngine;
 
 import edu.kh.project.email.model.mapper.EmailMapper;
+import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -39,12 +43,57 @@ public class EmailServiceImpl implements EmailService {
 		
 		
 		// 2. DB에 저장이 성공된 경우에 메일 발송 시도
+		MimeMessage mimeMessage = mailSender.createMimeMessage();
+		// 메일 발송 시 사용하는 객체
 		
-		
+		try {
+			// 메일 발송을 도와주는 Helper 클래스 
+			// (파일첨부, 템플릿 설정 등 쉽게 처리)
+			MimeMessageHelper helper 
+				= new MimeMessageHelper(mimeMessage, true, "UTF-8");
+			// - mimeMessage : MimeMessage 객체로, 
+			//	이메일 메시지의 내용을 담고있음
+			//  (이메일의 본문, 제목, 수신자 정보 등 포함)
+			// - true : 파일 첨부를 사용할 것인지 여부 지정
+			//  (파일첨부 및 내부 이미지 삽입 가능)
+			// - "UTF-8" : 이메일 내용이 UTF-8 인코딩으로 전송
+			
+			// 메일 기본 정보 셋팅
+			helper.setTo(email); // 받는 사람(수신자)
+			helper.setSubject("[boardProject] 회원 가입 인증번호입니다."); // 제목
+			helper.setText( loadHtml(authKey, type) , true );
+			// HTML 내용 설정
+			//helper.setText("인증번호 입니다 : " + authKey);
+			// 인증번호 입니다 : agdsey
+			
+			// 메일에 이미지 첨부(로고)
+			helper.addInline("logo", new ClassPathResource("static/images/logo.jpg"));
+			
+			// 실제 메일 발송
+			mailSender.send(mimeMessage);
+			
+			
+			return authKey;
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null; // 메일 발송 실패 시 null 반환
+		}
 	
-		return null;
 	}
 	
+	// HTML 템플릿에 데이터를 넣어 최종 HTML 생성
+	private String loadHtml(String authKey, String type) {
+		// Context(org.thymeleaf.context.Context)
+		// : 타임리프에서 제공하는 HTML 템플릿에 
+		// 데이터를 전달하기 위해 사용하는 클래스
+		Context context = new Context();
+		context.setVariable("authKey", authKey);
+		
+		return templateEngine.process("email/" + type, context);
+		// src/main/resources/templates/email/signup.html
+	}
+
 	// 인증키와 이메일을 DB에 저장하는 메서드
 	@Transactional(rollbackFor = Exception.class) // 메서드 레벨에서도 이용 가능
 	public boolean storeAuthKey(Map<String, String> map) {
