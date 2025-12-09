@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,6 +11,7 @@
   <!-- 회원가입 페이지만의 css 추가 -->
   <link rel="stylesheet" href="/css/member/signup-style.css">
 </head>
+
 <body>
 
   <main>
@@ -26,12 +28,12 @@
         </label>
 
         <div class="signUp-input-area">
-          <input type="text" name="memberEmail" id="memberEmail" 
-          placeholder="아이디(이메일)" maxlength="30" autocomplete="off">
-          
+          <input type="text" name="memberEmail" id="memberEmail" placeholder="아이디(이메일)" maxlength="30"
+            autocomplete="off">
+
           <button id="sendAuthKeyBtn" type="button">인증번호 받기</button>
         </div>
-        
+
         <span class="signUp-message" id="emailMessage">메일을 받을 수 있는 이메일을 입력해주세요.</span>
 
 
@@ -42,14 +44,14 @@
         </label>
 
         <div class="signUp-input-area">
-          <input type="text" name="authKey" id="authKey" placeholder="인증번호 입력" maxlength="6" autocomplete="off" >
-          
+          <input type="text" name="authKey" id="authKey" placeholder="인증번호 입력" maxlength="6" autocomplete="off">
+
           <button id="checkAuthKeyBtn" type="button">인증하기</button>
         </div>
 
         <span class="signUp-message" id="authKeyMessage"></span>
-                        <!-- 인증번호가 일치하지 않습니다 -->
-        
+        <!-- 인증번호가 일치하지 않습니다 -->
+
 
         <!-- 비밀번호/비밀번호 확인 입력 -->
         <label for="memberPw">
@@ -57,13 +59,11 @@
         </label>
 
         <div class="signUp-input-area">
-          <input type="password" name="memberPw" id="memberPw" 
-          placeholder="비밀번호" maxlength="20" >
+          <input type="password" name="memberPw" id="memberPw" placeholder="비밀번호" maxlength="20">
         </div>
 
         <div class="signUp-input-area">
-          <input type="password" name="memberPwConfirm" id="memberPwConfirm" 
-          placeholder="비밀번호 확인" maxlength="20" >
+          <input type="password" name="memberPwConfirm" id="memberPwConfirm" placeholder="비밀번호 확인" maxlength="20">
         </div>
 
         <!-- 정규 표현식 -->
@@ -75,7 +75,7 @@
         </label>
 
         <div class="signUp-input-area">
-          <input type="text" name="memberNickname" id="memberNickname" placeholder="닉네임" maxlength="10" >
+          <input type="text" name="memberNickname" id="memberNickname" placeholder="닉네임" maxlength="10">
         </div>
 
         <span class="signUp-message" id="nickMessage">한글,영어,숫자로만 2~10글자</span>
@@ -97,8 +97,8 @@
         <label for="memberAddress">주소</label>
 
         <div class="signUp-input-area">
-          <input type="text" name="memberAddress" placeholder="우편번호" maxlength="6" id="postcode">                       
-          
+          <input type="text" name="memberAddress" placeholder="우편번호" maxlength="6" id="postcode">
+
           <button type="button" id="searchAddress">검색</button>
         </div>
 
@@ -113,16 +113,18 @@
         <button id="signUpBtn">가입하기</button>
       </form>
     </section>
-    
+
   </main>
 
   <!-- 푸터 추가 -->
   <th:block th:replace="~{common/footer}"></th:block>
 
   <!-- 다음 주소 API 추가 -->
+  <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
 
   <!-- 회원 가입 JS 추가 -->
-  <script src="/js/member/signup.js"></script> 
-  
+  <script src="/js/member/signup.js"></script>
+
 </body>
+
 </html>
