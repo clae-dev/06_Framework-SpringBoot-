@@ -26,4 +26,10 @@ public interface MyPageMapper {
 	 * @return result 
 	 */
 	int changePw(Map<String, Object> paramMap);
+
+	/** 회원 탈퇴 SQL (update)
+	 * @param memberNo
+	 * @return
+	 */
+	int secession(int memberNo);
 }
