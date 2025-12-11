@@ -188,6 +188,72 @@ public class MyPageServiceImpl implements MyPageService {
 		return mapper.fileList(memberNo);
 	}
 	
+	// 여러 파일 업로드 서비스
+	@Override
+	public int fileUpload3(List<MultipartFile> aaaList, 
+						List<MultipartFile> bbbList, 
+						int memberNo) throws Exception {
+		
+		// 1. aaaList 처리
+		int result1 = 0;
+		
+		// 업로드된 파일이 없을 경우를 제외하고 업로드
+		for(MultipartFile file : aaaList) {
+			
+			if(file.isEmpty()) { // 파일이 없으면 다음 파일
+				continue; // 아래 코드 수행 X 다음반복으로 넘어감..
+			}
+			
+			// fileUpload2() 메서드 호출(재활용)
+			// -> 파일 하나 업로드 + DB INSERT
+			result1 += fileUpload2(file, memberNo);
+			
+		}
+		
+		// 2. bbbList 처리
+		int result2 = 0;
+		
+		for(MultipartFile file : bbbList) {
+			
+			if(file.isEmpty()) continue;
+			
+			result2 += fileUpload2(file, memberNo);
+		}
+		
+		return result1 + result2;
+	}
+	
+	// 프로필 이미지 변경 서비스
+	@Override
+	public int profile(MultipartFile profileImg, Member loginMember) throws Exception {
+		
+		// 프로필 이미지 경로 (수정할 경로)
+		String updatePath = null; 
+		
+		// 변경명 저장
+		String rename = null;
+		
+		// 업로드한 이미지가 있을 경우
+		if( !profileImg.isEmpty() ) {
+			// updatePath 경로 조합 
+			
+			// 1. 파일명 변경
+			rename = Utility.fileRename(profileImg.getOriginalFilename());
+			
+			// 2. /myPage/profile/변경된파일명
+			updatePath = "";
+		}
+		
+		
+		return 0;
+	}
+	
+	
+	
+	
+	
+	
+	
 	
 
 }
