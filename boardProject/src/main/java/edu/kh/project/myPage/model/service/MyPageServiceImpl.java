@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,14 +21,21 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 @Transactional(rollbackFor = Exception.class)
 @Slf4j
+@PropertySource("classpath:/config.properties")
 public class MyPageServiceImpl implements MyPageService {
 
 	@Autowired
 	private MyPageMapper mapper;
-
+	
 	// BCrypt 암호화 객체 의존성 주입(SecurityConfig 참고)
 	@Autowired
 	private BCryptPasswordEncoder bcrypt;
+	
+	@Value("${my.profile.web-path}")
+	private String profileWebPath; // /myPage/profile/
+	
+	@Value("${my.profile.folder-path}")
+	private String profileFolderPath; // C:/uploadFiles/profile/
 
 	// 회원 정보 수정
 	@Override
@@ -241,11 +250,35 @@ public class MyPageServiceImpl implements MyPageService {
 			rename = Utility.fileRename(profileImg.getOriginalFilename());
 			
 			// 2. /myPage/profile/변경된파일명
-			updatePath = "";
+			updatePath = profileWebPath + rename;
 		}
 		
+		// 수정된 프로필 이미지 경로 + 회원 번호를 저장할 DTO 객체
+		Member member = Member.builder()
+						.memberNo(loginMember.getMemberNo())
+						.profileImg(updatePath)
+						.build();
 		
-		return 0;
+		// UPDATE 수행
+		int result = mapper.profile(member);
+		
+		if(result > 0) { // DB에 업데이트 성공
+			
+			// 프로필 이미지를 없앤 경우(NULL로 수정한 경우)를 제외
+			// -> 업로드한 이미지가 있을 경우
+			if( !profileImg.isEmpty() ) {
+				// 파일을 서버 지정된 폴더에 저장
+				profileImg.transferTo(new File(profileFolderPath + rename));
+								// C:/uploadFiles/profile/변경한이름
+			}
+			
+			// 세션에 등록된 현재 로그인한 회원 정보에서 
+			// 프로필 이미지 경로를 DB에 업데이트한 경로로 변경
+			loginMember.setProfileImg(updatePath);
+			
+		} 
+		
+		return result;
 	}
 	
 	

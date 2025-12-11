@@ -361,7 +361,15 @@ public class MyPageController {
 		// 서비스 호출
 		int result = service.profile(profileImg, loginMember);
 		
+		String message = null;
 		
+		if(result > 0) {
+			message = "변경 성공!";
+		} else {
+			message = "변경 실패ㅠㅠ";
+		}
+		
+		ra.addFlashAttribute("message", message);
 		
 		return "redirect:profile"; // 리다이렉트 - /myPage/profile GET 요청
 	}
