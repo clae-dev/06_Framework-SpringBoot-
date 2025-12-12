@@ -19,6 +19,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import edu.kh.project.member.model.dto.Member;
 import edu.kh.project.myPage.model.dto.UploadFile;
 import edu.kh.project.myPage.model.service.MyPageService;
+import edu.kh.project.myPage.model.service.MyPageServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 
 /*

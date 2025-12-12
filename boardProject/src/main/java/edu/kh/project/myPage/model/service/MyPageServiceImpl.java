@@ -171,8 +171,12 @@ public class MyPageServiceImpl implements MyPageService {
 		// Builder 패턴을 이용해서 UploadFile 객체 생성
 		// 장점 1) 반복되는 참조변수명, set 구문 생략
 		// 장점 2) method chaining을 이용하여 한줄로 작성 가능
-		UploadFile uf = UploadFile.builder().memberNo(memberNo).filePath(webPath)
-				.fileOriginalName(uploadFile.getOriginalFilename()).fileRename(fileRename).build();
+		UploadFile uf = UploadFile.builder()
+				.memberNo(memberNo)
+				.filePath(webPath)
+				.fileOriginalName(uploadFile.getOriginalFilename())
+				.fileRename(fileRename)
+				.build();
 
 		int result = mapper.insertUploadFile(uf);
 
@@ -258,6 +262,7 @@ public class MyPageServiceImpl implements MyPageService {
 						.memberNo(loginMember.getMemberNo())
 						.profileImg(updatePath)
 						.build();
+			
 		
 		// UPDATE 수행
 		int result = mapper.profile(member);
