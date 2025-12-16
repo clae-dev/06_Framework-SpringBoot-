@@ -57,9 +57,17 @@ public class BoardController {
 			// 게시글 목록 조회 서비스 호출
 			map = service.selectBoardList(boardCode, cp);
 	
-		} else { // 검색인 경우
+		} else { // 검색인 경우  
+			//--> paramMap에 key라는 k에 접근하면 매핑된 value 반환
+			//--> ex) {key=w, query=짱구}
+			//--> --> w 반환됨
+			
+			// boardCode를 paramMap에 추가
+			paramMap.put("boardCode", boardCode);
+			// -> paramMap은 {key=w, query=짱구, boardCode=1}
 			
 			// 검색(내가 검색하고 싶은 게시글 목록 조회) 서비스 호출
+			map = service.searchList(paramMap, cp);
 			
 		}
 		

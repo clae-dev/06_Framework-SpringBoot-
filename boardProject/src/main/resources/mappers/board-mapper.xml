@@ -54,6 +54,45 @@
 		ORDER BY BOARD_NO DESC
    	</select>
    	
+   	<!-- 
+   		동적 SQL : <choose>, <when>, <otherwise>
+   		
+   		<choose> : 조건문을 작성할 영역 지정
+   			내부에 <when>, <otherwise> 태그 작성 가능
+   		
+   		<when>   : if, else if 역할의 태그
+   			- test 속성 : 조건식을 작성하는 속성
+   			
+   		<otherwise> : else 역할의 태그
+   	 -->
+   	
+   	<!-- 검색 조건이 맞는 게시글 수 조회 -->
+   	<select id="getSearchCount">
+   		SELECT COUNT(*)
+   		FROM "BOARD"
+   		<!--  작성자 검색인 경우 -->
+   		<if test='key == "w"'>
+   			JOIN "MEMBER" USING(MEMBER_NO)
+   		</if>
+   		
+   		WHERE BOARD_DEL_FL = 'N'
+   		AND BOARD_CODE = #{boardCode}
+   		<choose>
+   			<!-- 제목 검색 (key 값 "t") -->
+   			<when test='key == "t"'>
+   				AND BOARD_TITLE LIKE '%' || #{query} || '%'
+   			</when>
+   			
+   			<!-- 내용 검색 (key 값 "c") -->
+   			<!-- 제목+내용 검색 (key 값 "tc") -->
+   			<!-- 작성자 검색 (key 값 "w") -->
+   		</choose>
+   		
+   	</select>
+   	
+   	
+   	
+   	
    	
    
    

@@ -29,6 +29,12 @@ public interface BoardMapper {
 	 */
 	List<Board> selectBoardList(int boardCode, RowBounds rowBounds);
 
+	/** 검색 조건이 맞는 게시글 수 조회 SQL 수행
+	 * @param paramMap
+	 * @return
+	 */
+	int getSearchCount(Map<String, Object> paramMap);
+
 	
 	
 	
