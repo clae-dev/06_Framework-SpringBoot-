@@ -11,7 +11,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.SessionAttribute;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import edu.kh.project.board.model.dto.Board;
 import edu.kh.project.board.model.service.BoardService;
 import edu.kh.project.member.model.dto.Member;
 import lombok.extern.slf4j.Slf4j;
@@ -87,10 +89,10 @@ public class BoardController {
 	// /board/2/1960
 	@GetMapping("{boardCode:[0-9]+}/{boardNo:[0-9]+}")
 	public String boardDetail(@PathVariable("boardCode") int boardCode,
-						@PathVariable("boardNo") int boardNo,
-						@SessionAttribute(value = "loginMember", required = false) Member loginMember
-							
-			) {
+				@PathVariable("boardNo") int boardNo,
+				@SessionAttribute(value = "loginMember", required = false) Member loginMember,
+				Model model,
+				RedirectAttributes ra) {
 		
 		// 게시글 상세 조회 서비스 호출
 		// 1) Map으로 전달할 파라미터 묶기
@@ -98,8 +100,14 @@ public class BoardController {
 		map.put("boardCode", boardCode);
 		map.put("boardNo", boardNo);
 		
+		// 로그인 상태인 경우에만 memberNo를 map 추가
+		// LIKE_CHECK시 이용 (로그인한 사람이 좋아요 누른 게시글인지 체크하기 위함)
+		if(loginMember != null) {
+			map.put("memberNo", loginMember.getMemberNo());
+		}
 		
-		
+		// 2) 서비스 호출
+		Board board = service.selectOne(map);
 		
 		
 		return "";
