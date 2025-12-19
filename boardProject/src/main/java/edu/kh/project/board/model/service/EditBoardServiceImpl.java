@@ -3,6 +3,7 @@ package edu.kh.project.board.model.service;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -145,12 +146,18 @@ public class EditBoardServiceImpl implements EditBoardService {
 			if (result == 0) {
 				throw new RuntimeException();
 			}
+			
+			// deleteOrderList에 담긴 삭제된 갯수가 삭제 성공한 행의 갯수와 다를때
+			List<String> orderList = Arrays.asList(deleteOrderList.split(","));
 
+			if(result != orderList.size() ) {
+				throw new RuntimeException(); // 마찬가지로 롤백
+			}
 		}
 
 		// 3. 선택한 파일이 존재할 경우
 		// (클라이언트가 실제로 업로드한 이미지가 있는 경우)
-		
+
 		// 실제 업로드된 이미지만 모아둘 List 생성
 		List<BoardImg> uploadList = new ArrayList<>();
 
@@ -167,52 +174,56 @@ public class EditBoardServiceImpl implements EditBoardService {
 				String rename = Utility.fileRename(originalName);
 
 				// 모든 값을 저장할 BoardImg DTO로 객체 생성
-				BoardImg img = BoardImg.builder().
-						imgOriginalName(originalName).
-						imgRename(rename)
+				BoardImg img = BoardImg.builder()
+						.imgOriginalName(originalName)
+						.imgRename(rename)
 						.imgPath(webPath)
 						.boardNo(inputBoard.getBoardNo())
 						.imgOrder(i)
-						.uploadFile(images.get(i))
-						.build();
+						.uploadFile(images.get(i)).build();
 
 				// uploadList에 추가
 				uploadList.add(img);
-				
+
 				// 4. 업로드 하려는 이미지 정보(img) 이용해서
-				//    수정 또는 삽입 수행
-				
+				// 수정 또는 삽입 수행
+
 				// 1) 기존 O -> 새 이미지로 변경 -> 수정
 				result = mapper.updateImage(img);
-				
-				if(result == 0) {
+
+				if (result == 0) {
 					// 수정 실패 == 기존 해당 순서(IMG_ORDER)에 이미지가 없었음
 					// -> 삽입 수행
-					
+
 					// 2) 기존 X -> 새 이미지 추가
 					result = mapper.insertImage(img);
-					
+
 				}
 			}
-			
+
 			// 수정 또는 삽입이 실패한 경우
-			if(result == 0) {
+			if (result == 0) {
 				throw new RuntimeException(); // 롤백
 			}
 
 		}
-		
+
 		// 선택한 파일이 없을 경우
-		if(uploadList.isEmpty()) {
+		if (uploadList.isEmpty()) {
 			return result;
 		}
-		
+
 		// 수정, 새 이미지 파일을 서버에 저장
-		for(BoardImg img : uploadList) {
+		for (BoardImg img : uploadList) {
 			img.getUploadFile().transferTo(new File(folderPath + img.getImgRename()));
 		}
-		
 
 		return result;
+	}
+
+	// 게시글 삭제
+	@Override
+	public int boardDelete(Map<String, Integer> map) {
+		return mapper.boardDelete(map);
 	}
 }
