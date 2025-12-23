@@ -47,55 +47,51 @@ public class MemberController {
 	 */
 	@PostMapping("login") // /member/login 요청 POST 방식 매핑
 	public String login(/* @ModelAttribute */ Member inputMember, RedirectAttributes ra, Model model,
-			@RequestParam(value = "saveId", required = false) String saveId, HttpServletResponse resp) {
+			@RequestParam(value = "saveId", required = false) 
+	String saveId, HttpServletResponse resp) throws Exception{
 
 		// 로그인 서비스 호출
-		try {
-			Member loginMember = service.login(inputMember);
 
-			log.debug("loginMember : " + loginMember);
+		Member loginMember = service.login(inputMember);
 
-			// 로그인 실패 시
-			if (loginMember == null) {
-				ra.addFlashAttribute("message", "아이디 또는 비밀번호가 일치하지 않습니다");
+		log.debug("loginMember : " + loginMember);
 
-			} else {
-				// 로그인 성공 시
-				model.addAttribute("loginMember", loginMember);
-				// 1단계 : request scope에 세팅됨
-				// 2단계 : 클래스 위에 @SessionAttributes()
-				// 어노테이션 작성하여 session scope 이동
+		// 로그인 실패 시
+		if (loginMember == null) {
+			ra.addFlashAttribute("message", "아이디 또는 비밀번호가 일치하지 않습니다");
 
-				// **************** Cookie *********************
-				// 이메일 저장
+		} else {
+			// 로그인 성공 시
+			model.addAttribute("loginMember", loginMember);
+			// 1단계 : request scope에 세팅됨
+			// 2단계 : 클래스 위에 @SessionAttributes()
+			// 어노테이션 작성하여 session scope 이동
 
-				// 쿠키 객체 생성 (K:V)
-				Cookie cookie = new Cookie("saveId", loginMember.getMemberEmail());
-				// saveId=user01@kh.or.kr
+			// **************** Cookie *********************
+			// 이메일 저장
 
-				// 쿠키가 적용될 경로 설정
-				// -> 클라이언트가 어떤 요청을 할 때 쿠키가 첨부될지 지정
-				cookie.setPath("/");
-				// "/" -> IP 또는 도메인 또는 localhost
-				// -> 메인페이지 + 그 하위 주소 모두
+			// 쿠키 객체 생성 (K:V)
+			Cookie cookie = new Cookie("saveId", loginMember.getMemberEmail());
+			// saveId=user01@kh.or.kr
 
-				// 쿠키의 만료 기간 지정
-				if (saveId != null) { // 아이디 저장 체크 시
-					cookie.setMaxAge(60 * 60 * 24 * 30); // 30일 초단위로 지정
+			// 쿠키가 적용될 경로 설정
+			// -> 클라이언트가 어떤 요청을 할 때 쿠키가 첨부될지 지정
+			cookie.setPath("/");
+			// "/" -> IP 또는 도메인 또는 localhost
+			// -> 메인페이지 + 그 하위 주소 모두
 
-				} else { // 미체크 시
-					cookie.setMaxAge(0); // 0초 (클라이언트의 쿠키 삭제)
+			// 쿠키의 만료 기간 지정
+			if (saveId != null) { // 아이디 저장 체크 시
+				cookie.setMaxAge(60 * 60 * 24 * 30); // 30일 초단위로 지정
 
-				}
-
-				// 응답객체에 쿠키 추가 -> 클라이언트 전달
-				resp.addCookie(cookie);
+			} else { // 미체크 시
+				cookie.setMaxAge(0); // 0초 (클라이언트의 쿠키 삭제)
 
 			}
 
-		} catch (Exception e) {
-			log.info("로그인 중 예외 발생");
-			e.printStackTrace();
+			// 응답객체에 쿠키 추가 -> 클라이언트 전달
+			resp.addCookie(cookie);
+
 		}
 
 		return "redirect:/"; // 메인페이지 재요청

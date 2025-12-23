@@ -18,7 +18,7 @@
 		ENROLL_DATE 
 		FROM "MEMBER" 
 		WHERE MEMBER_EMAIL = #{memberEmail}
-		AND MEMBER_DEL_FL = 'N'
+		AND MEMBER_DEL_FL = 'N';
    </select>
    
    <!-- 이메일 중복 검사 -->
