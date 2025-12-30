@@ -231,7 +231,6 @@ function selectRoomList(){
 
 
 
-
 // 채팅 메세지 영역
 const display = document.getElementsByClassName("display-chatting")[0];
 
