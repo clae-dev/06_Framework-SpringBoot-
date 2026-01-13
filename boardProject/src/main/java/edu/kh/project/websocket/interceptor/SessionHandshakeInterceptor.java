@@ -26,6 +26,7 @@ public class SessionHandshakeInterceptor implements HandshakeInterceptor{
 	@Override
 	public boolean beforeHandshake(ServerHttpRequest request, ServerHttpResponse response, 
 								WebSocketHandler wsHandler,
+								Map<String, Object> attributes) throws Exception {
 		
 		// ServerHttpRequest  : HttpServletRequest 의 부모 인터페이스
 		// ServerHttpResponse : HttpServletResponse의 부모 인터페이스
